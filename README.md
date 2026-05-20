@@ -100,11 +100,11 @@ The following API surface describes the target IssueFlow REST contract.
 
 | Operation | Endpoint | Notes |
 | --- | --- | --- |
-| List users | `GET /users` | Returns user summaries. |
-| Get user | `GET /users/{userId}` | Returns one user by ID. |
-| Create user | `POST /users` | Creates a user with username, email, full name, role, and password data. |
-| Update user | `PATCH /users/{userId}` | Updates editable user fields. |
-| Delete user | `DELETE /users/{userId}` | Deletes or deactivates a user according to domain rules. |
+| List users | `GET /users` | Returns user summaries. Requires JWT. |
+| Get user | `GET /users/{userId}` | Returns one user by ID. Requires JWT. |
+| Create user | `POST /users` | Creates a user with username, email, full name, role, and password. Requires ADMIN. |
+| Update user | `POST /users/update/{userId}` | Updates full name and role. Requires ADMIN. |
+| Delete user | `DELETE /users/{userId}` | Deletes a user. Requires ADMIN. |
 
 ### Projects
 
