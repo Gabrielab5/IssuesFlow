@@ -16,5 +16,5 @@ When you finish a task, output:
 - a short summary of what changed,
 - the exact `./mvnw` commands to verify,
 - a "follow-ups" list of anything you stubbed or skipped.
-
+- Update the README.md Accordingly to the changed after each step.
 Do not run destructive commands. Do not edit ASSIGNMENT.md or README.md.
