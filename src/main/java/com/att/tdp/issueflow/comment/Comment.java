@@ -5,6 +5,9 @@ import com.att.tdp.issueflow.ticket.Ticket;
 import com.att.tdp.issueflow.user.User;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "comments")
 public class Comment extends BaseEntity {
@@ -23,6 +26,9 @@ public class Comment extends BaseEntity {
     @Version
     private Long version;
 
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentMention> mentions = new ArrayList<>();
+
     public Ticket getTicket() { return ticket; }
     public void setTicket(Ticket ticket) { this.ticket = ticket; }
 
@@ -34,4 +40,6 @@ public class Comment extends BaseEntity {
 
     public Long getVersion() { return version; }
     public void setVersion(Long version) { this.version = version; }
+
+    public List<CommentMention> getMentions() { return mentions; }
 }

@@ -4,6 +4,7 @@ import com.att.tdp.issueflow.common.annotation.Audited;
 import com.att.tdp.issueflow.common.exception.ConflictException;
 import com.att.tdp.issueflow.common.exception.ForbiddenException;
 import com.att.tdp.issueflow.common.exception.NotFoundException;
+import com.att.tdp.issueflow.mention.MentionService;
 import com.att.tdp.issueflow.ticket.Ticket;
 import com.att.tdp.issueflow.ticket.TicketRepository;
 import com.att.tdp.issueflow.user.User;
@@ -20,15 +21,18 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
+    private final MentionService mentionService;
 
     public CommentService(
             CommentRepository commentRepository,
             TicketRepository ticketRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            MentionService mentionService
     ) {
         this.commentRepository = commentRepository;
         this.ticketRepository = ticketRepository;
         this.userRepository = userRepository;
+        this.mentionService = mentionService;
     }
 
     @Transactional(readOnly = true)
@@ -52,7 +56,9 @@ public class CommentService {
         comment.setAuthor(author);
         comment.setContent(request.content());
 
-        return CommentMapper.toResponse(commentRepository.save(comment));
+        Comment saved = commentRepository.save(comment);
+        mentionService.syncMentions(saved, request.content());
+        return CommentMapper.toResponse(saved);
     }
 
     @Transactional
@@ -64,6 +70,7 @@ public class CommentService {
         assertCanModify(comment, auth);
         assertVersionMatches(comment, request.version());
         comment.setContent(request.content());
+        mentionService.syncMentions(comment, request.content());
         // dirty-checking flushes the UPDATE; Hibernate also adds AND version=? as a second guard
         return CommentMapper.toResponse(comment);
     }

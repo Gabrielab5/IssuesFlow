@@ -1,6 +1,9 @@
 package com.att.tdp.issueflow.comment;
 
+import com.att.tdp.issueflow.mention.UserSummary;
+
 import java.time.Instant;
+import java.util.List;
 
 public record CommentResponse(
         Long id,
@@ -10,6 +13,7 @@ public record CommentResponse(
         String content,
         Long version,
         Instant createdAt,
-        Instant updatedAt
+        Instant updatedAt,
+        List<UserSummary> mentionedUsers
 ) {
 }
