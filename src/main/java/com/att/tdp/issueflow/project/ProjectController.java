@@ -60,6 +60,11 @@ public class ProjectController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/{projectId}/workload")
+    public List<WorkloadEntry> getWorkload(@PathVariable Long projectId) {
+        return projectService.getWorkload(projectId);
+    }
+
     @PostMapping("/{projectId}/restore")
     @PreAuthorize("hasRole('ADMIN')")
     public ProjectResponse restore(@PathVariable Long projectId) {

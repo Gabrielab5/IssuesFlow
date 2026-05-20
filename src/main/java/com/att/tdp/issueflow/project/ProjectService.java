@@ -89,6 +89,18 @@ public class ProjectService {
         );
     }
 
+    @Transactional(readOnly = true)
+    public List<WorkloadEntry> getWorkload(Long projectId) {
+        findProject(projectId);
+        return ticketRepository.findWorkloadByProjectId(projectId).stream()
+                .map(row -> new WorkloadEntry(
+                        ((Number) row[0]).longValue(),
+                        (String) row[1],
+                        ((Number) row[2]).longValue()
+                ))
+                .toList();
+    }
+
     private Project findProject(Long projectId) {
         return projectRepository.findById(projectId)
                 .orElseThrow(() -> NotFoundException.of("Project", projectId));
