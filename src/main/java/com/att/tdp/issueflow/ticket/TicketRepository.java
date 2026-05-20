@@ -1,6 +1,7 @@
 package com.att.tdp.issueflow.ticket;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -27,4 +28,9 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     @Query(value = "SELECT * FROM tickets WHERE deleted_at IS NOT NULL AND id = :id", nativeQuery = true)
     Optional<Ticket> findDeletedById(@Param("id") Long id);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "UPDATE tickets SET deleted_at = NOW() WHERE project_id = :projectId AND deleted_at IS NULL",
+            nativeQuery = true)
+    void softDeleteAllByProjectId(@Param("projectId") Long projectId);
 }

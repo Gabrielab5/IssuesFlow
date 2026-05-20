@@ -7,7 +7,10 @@
       "PowerShell(setx JAVA_HOME \"C:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-21.0.11.10-hotspot\")",
       "Bash(export JAVA_HOME=\"/c/Program Files/Eclipse Adoptium/jdk-21.0.11.10-hotspot\")",
       "Bash(./mvnw test *)",
-      "Bash(./mvnw clean *)"
+      "Bash(./mvnw clean *)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\gabri\\\\my projects\\\\tdp2026-homework\\\\TDP2026HW\\\\issueflow-java\" -Recurse)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)"
     ]
   }
 }
