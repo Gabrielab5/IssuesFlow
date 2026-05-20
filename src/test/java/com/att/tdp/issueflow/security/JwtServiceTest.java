@@ -34,8 +34,9 @@ class JwtServiceTest {
     void parseRejectsTamperedToken() {
         JwtService jwtService = new JwtService(new JwtProperties(SECRET, 60, ISSUER));
         String token = jwtService.issue("alice", "ADMIN");
-        String tamperedToken = token.substring(0, token.length() - 1)
-                + (token.endsWith("a") ? "b" : "a");
+        String[] parts = token.split("\\.");
+        parts[1] = replaceFirstCharacter(parts[1]);
+        String tamperedToken = String.join(".", parts);
 
         assertThatThrownBy(() -> jwtService.parse(tamperedToken))
                 .isInstanceOf(JwtException.class);
@@ -48,5 +49,10 @@ class JwtServiceTest {
 
         assertThatThrownBy(() -> jwtService.parse(token))
                 .isInstanceOf(ExpiredJwtException.class);
+    }
+
+    private String replaceFirstCharacter(String value) {
+        char replacement = value.charAt(0) == 'a' ? 'b' : 'a';
+        return replacement + value.substring(1);
     }
 }

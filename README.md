@@ -64,6 +64,9 @@ The application signs tokens with HS256. Tokens include a subject, issuer, role 
 - `TokenDenyListService` stores revoked token JTIs and removes expired revoked tokens every hour.
 - `JwtAuthenticationFilter` reads `Authorization: Bearer <token>`, validates the JWT, checks the deny-list, loads the user, and populates the Spring Security context.
 - `CustomUserDetailsService` loads active users from `UserRepository` and maps roles to `ROLE_ADMIN` or `ROLE_DEVELOPER`.
+- `AuthService` authenticates login requests, issues JWTs, returns the current user profile, revokes logout tokens, and audit-logs LOGIN and LOGOUT events.
+- `AuthController` exposes `POST /auth/login`, `POST /auth/logout`, and `GET /auth/me`.
+- `AuditService` persists structured audit entries for authentication events and other state-changing service workflows.
 - `SecurityConfig` configures stateless sessions, disables CSRF, enables method security, registers the JWT filter, and exposes a `BCryptPasswordEncoder` bean.
 
 ### Public Endpoints
@@ -86,8 +89,8 @@ All other endpoints require a valid JWT. ADMIN-only endpoints should use:
 | API | Endpoint | Request | Response |
 | --- | --- | --- | --- |
 | Login | `POST /auth/login` | `{ "username": "jdoe", "password": "secret" }` | `{ "accessToken": "<jwt>", "tokenType": "Bearer", "expiresIn": 3600 }` |
-| Logout | `POST /auth/logout` | Bearer token | `200 OK` |
-| Current user | `GET /auth/me` | Bearer token | Authenticated user profile |
+| Logout | `POST /auth/logout` | Bearer token | `200 OK`; the token JTI is added to the deny-list until expiry. |
+| Current user | `GET /auth/me` | Bearer token | `{ "id": 1, "username": "jdoe", "email": "jdoe@example.com", "fullName": "John Doe", "role": "DEVELOPER" }` |
 
 ## API Contract
 
@@ -239,19 +242,25 @@ Run tests:
 Run the focused Phase 3 security tests:
 
 ```bash
-./mvnw "-Dtest=JwtServiceTest,TokenDenyListServiceTest,CustomUserDetailsServiceTest" test
+./mvnw "-Dtest=JwtServiceTest,TokenDenyListServiceTest,CustomUserDetailsServiceTest,AuditServiceTest,AuthServiceTest" test
 ```
 
 On Windows PowerShell:
 
 ```powershell
-.\mvnw.cmd "-Dtest=JwtServiceTest,TokenDenyListServiceTest,CustomUserDetailsServiceTest" test
+.\mvnw.cmd "-Dtest=JwtServiceTest,TokenDenyListServiceTest,CustomUserDetailsServiceTest,AuditServiceTest,AuthServiceTest" test
+```
+
+Run the authentication integration test with Docker/Testcontainers available:
+
+```powershell
+.\mvnw.cmd "-Dtest=AuthControllerIntegrationTest" test
 ```
 
 ## Testing Notes
 
 - Service-level behavior is covered with JUnit 5 and Mockito.
-- Repository and controller integration tests are expected to use Testcontainers PostgreSQL.
+- Repository and controller integration tests use Testcontainers PostgreSQL.
 - Full-suite runs require Docker for Testcontainers-backed tests.
 
 ## AI And Agent Usage
