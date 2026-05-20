@@ -37,10 +37,11 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
-app:
+issueflow:
   jwt:
     secret: ${JWT_SECRET:dev-secret-change-in-production-must-be-at-least-256-bits-long!!}
-    expiration-ms: ${JWT_EXPIRATION_MS:3600000}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:60}
+    issuer: ${JWT_ISSUER:issueflow}
 
 management:
   endpoints:
