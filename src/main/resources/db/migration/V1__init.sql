@@ -1,0 +1,3 @@
+-- V1__init.sql
+-- Initial schema for IssueFlow.
+-- Tables are defined here; subsequent migrations use V2__, V3__, etc.
