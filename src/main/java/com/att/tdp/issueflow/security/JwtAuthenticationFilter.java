@@ -25,6 +25,9 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    public static final String JWT_JTI_ATTRIBUTE = "issueflow.jwt.jti";
+    public static final String JWT_EXPIRY_ATTRIBUTE = "issueflow.jwt.expiry";
+
     private static final String BEARER_PREFIX = "Bearer ";
 
     private final JwtService jwtService;
@@ -64,6 +67,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 writeUnauthorized(response, request, "Invalid or expired token");
                 return;
             }
+            request.setAttribute(JWT_JTI_ATTRIBUTE, jti);
+            request.setAttribute(JWT_EXPIRY_ATTRIBUTE, claims.getExpiration().toInstant());
 
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(claims.getSubject());

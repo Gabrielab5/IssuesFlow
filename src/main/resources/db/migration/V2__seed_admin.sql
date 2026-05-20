@@ -13,7 +13,7 @@ VALUES (
     'admin@issueflow.local',
     'System Administrator',
     'ADMIN',
-    '$2a$10$ixlPY3AAd4ty1l6E2IsQ9OFZi2ba9ZQE0bP7RFcGIWNhyFrrT3YUi',
+    '$2a$10$OHM/7Jdjt0k2zq5tOUhoc.8W2tr5uk9LRC3KjkS7fvj18p/.EmMKi',
     NOW(),
     NOW()
 );

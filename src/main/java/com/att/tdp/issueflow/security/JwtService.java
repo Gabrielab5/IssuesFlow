@@ -39,12 +39,16 @@ public class JwtService {
     }
 
     public Claims parse(String token) {
-        return Jwts.parser()
+        Claims claims = Jwts.parser()
                 .verifyWith(signingKey)
                 .requireIssuer(properties.issuer())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+        if (claims.getExpiration() == null) {
+            throw new io.jsonwebtoken.JwtException("JWT must contain an expiration");
+        }
+        return claims;
     }
 
     public String getJti(String token) {
