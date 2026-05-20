@@ -169,6 +169,7 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    @SuppressWarnings("null")
     void methodArgumentNotValid_returns400_withFieldErrorsInDetails() throws Exception {
         mockMvc.perform(post("/test-ex/validated-body")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -180,6 +181,7 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    @SuppressWarnings("null")
     void malformedJson_returns400() throws Exception {
         mockMvc.perform(post("/test-ex/json-body")
                         .contentType(MediaType.APPLICATION_JSON)
