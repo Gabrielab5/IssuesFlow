@@ -28,6 +28,10 @@ spring:
     init:
       mode: never
 
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
   servlet:
     multipart:
       max-file-size: 10MB

@@ -1,6 +1,6 @@
 package com.att.tdp.issueflow.common.exception;
 
-public class ValidationException extends RuntimeException {
+public final class ValidationException extends DomainException {
     public ValidationException(String message) {
         super(message);
     }

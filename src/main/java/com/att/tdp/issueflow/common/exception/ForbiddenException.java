@@ -1,6 +1,6 @@
 package com.att.tdp.issueflow.common.exception;
 
-public class ForbiddenException extends RuntimeException {
+public final class ForbiddenException extends DomainException {
     public ForbiddenException(String message) {
         super(message);
     }
