@@ -48,14 +48,14 @@ public class UserService {
     }
 
     @Transactional
-    @Audited(action = "UPDATE", entityType = "User")
+    @Audited(action = "UPDATE", entityType = "User", idExpression = "#userId")
     public void update(Long userId, UpdateUserRequest request) {
         User user = findUser(userId);
         UserMapper.updateEntity(user, request);
     }
 
     @Transactional
-    @Audited(action = "DELETE", entityType = "User")
+    @Audited(action = "DELETE", entityType = "User", idExpression = "#userId")
     public void delete(Long userId) {
         User user = findUser(userId);
         userRepository.delete(user);

@@ -76,7 +76,7 @@ public class CommentService {
     }
 
     @Transactional
-    @Audited(action = "DELETE", entityType = "Comment")
+    @Audited(action = "DELETE", entityType = "Comment", idExpression = "#commentId")
     public void delete(Long ticketId, Long commentId, Authentication auth) {
         Comment comment = findComment(ticketId, commentId);
         assertCanModify(comment, auth);

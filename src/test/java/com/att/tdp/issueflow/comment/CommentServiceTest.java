@@ -3,6 +3,7 @@ package com.att.tdp.issueflow.comment;
 import com.att.tdp.issueflow.common.exception.ConflictException;
 import com.att.tdp.issueflow.common.exception.ForbiddenException;
 import com.att.tdp.issueflow.common.exception.NotFoundException;
+import com.att.tdp.issueflow.mention.MentionService;
 import com.att.tdp.issueflow.ticket.Ticket;
 import com.att.tdp.issueflow.ticket.TicketRepository;
 import com.att.tdp.issueflow.user.User;
@@ -39,11 +40,14 @@ class CommentServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private MentionService mentionService;
+
     private CommentService commentService;
 
     @BeforeEach
     void setUp() {
-        commentService = new CommentService(commentRepository, ticketRepository, userRepository);
+        commentService = new CommentService(commentRepository, ticketRepository, userRepository, mentionService);
     }
 
     // ── list ─────────────────────────────────────────────────────────────────

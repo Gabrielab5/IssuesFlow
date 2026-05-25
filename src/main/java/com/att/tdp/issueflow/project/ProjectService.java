@@ -63,7 +63,7 @@ public class ProjectService {
      * silently revive resolved or intentionally-closed tickets.
      */
     @Transactional
-    @Audited(action = "DELETE", entityType = "Project")
+    @Audited(action = "DELETE", entityType = "Project", idExpression = "#projectId")
     public void delete(Long projectId) {
         Project project = findProject(projectId);
         ticketRepository.softDeleteAllByProjectId(projectId);
