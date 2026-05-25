@@ -1,5 +1,6 @@
 package com.att.tdp.issueflow.audit;
 
+import com.att.tdp.issueflow.attachment.Attachment;
 import com.att.tdp.issueflow.comment.Comment;
 import com.att.tdp.issueflow.common.annotation.Audited;
 import com.att.tdp.issueflow.project.Project;
@@ -45,7 +46,8 @@ public class AuditAspect {
             "User", User.class,
             "Project", Project.class,
             "Ticket", Ticket.class,
-            "Comment", Comment.class
+            "Comment", Comment.class,
+            "Attachment", Attachment.class
     );
 
     private final AuditService auditService;

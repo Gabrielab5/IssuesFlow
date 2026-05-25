@@ -6,7 +6,8 @@ package com.att.tdp.issueflow.common.exception;
  */
 public sealed class DomainException extends RuntimeException
         permits NotFoundException, ConflictException, ForbiddenException,
-                ValidationException, BusinessRuleException {
+                ValidationException, BusinessRuleException,
+                UnsupportedMediaTypeException, FileTooLargeException {
 
     protected DomainException(String message) {
         super(message);

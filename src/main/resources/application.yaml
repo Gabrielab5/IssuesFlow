@@ -35,13 +35,15 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
-      max-request-size: 10MB
+      max-request-size: 11MB
 
 issueflow:
   jwt:
     secret: ${JWT_SECRET:dev-secret-change-in-production-must-be-at-least-256-bits-long!!}
     expiration-minutes: ${JWT_EXPIRATION_MINUTES:60}
     issuer: ${JWT_ISSUER:issueflow}
+  storage:
+    path: ${STORAGE_PATH:./var/attachments}
 
 management:
   endpoints:
