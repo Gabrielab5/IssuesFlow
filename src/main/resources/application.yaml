@@ -44,6 +44,8 @@ issueflow:
     issuer: ${JWT_ISSUER:issueflow}
   storage:
     path: ${STORAGE_PATH:./var/attachments}
+  escalation:
+    cron: ${ESCALATION_CRON:0 */5 * * * *}
 
 management:
   endpoints:

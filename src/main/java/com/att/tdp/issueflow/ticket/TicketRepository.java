@@ -1,10 +1,15 @@
 package com.att.tdp.issueflow.ticket;
 
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.QueryHint;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +46,16 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
      * ticket count, sorted by open count ASC then user.created_at ASC.
      * Each row: [userId (Long), username (String), openTicketCount (Long)].
      */
+    /**
+     * Locks each returned row for update and skips any row already locked by another session
+     * (SKIP_LOCKED via hint value -2). Soft-deleted tickets are excluded automatically by the
+     * @SQLRestriction on the Ticket entity. Called by TicketEscalationScheduler.
+     */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @QueryHints(@QueryHint(name = "jakarta.persistence.lock.timeout", value = "-2"))
+    @Query("SELECT t FROM Ticket t WHERE t.dueDate < :now AND t.status <> com.att.tdp.issueflow.ticket.TicketStatus.DONE")
+    List<Ticket> findOverdueForEscalation(@Param("now") Instant now);
+
     @Query(value = """
             SELECT u.id        AS userId,
                    u.username,

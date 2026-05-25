@@ -71,6 +71,45 @@ public class TicketService {
         return TicketMapper.toResponse(saved);
     }
 
+    /**
+     * Partial update: only non-null fields in the request are applied.
+     * A priority change always resets the isOverdue flag — manual triage overrides
+     * the scheduler's escalation state.
+     */
+    @Transactional
+    @Audited(action = "UPDATE", entityType = "Ticket", idExpression = "#ticketId")
+    public TicketResponse update(Long ticketId, UpdateTicketRequest request) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> NotFoundException.of("Ticket", ticketId));
+
+        if (request.title() != null && !request.title().isBlank()) {
+            ticket.setTitle(request.title());
+        }
+        if (request.description() != null) {
+            ticket.setDescription(request.description());
+        }
+        if (request.status() != null) {
+            ticket.setStatus(TicketStatus.valueOf(request.status().toUpperCase()));
+        }
+        if (request.priority() != null) {
+            ticket.setPriority(TicketPriority.valueOf(request.priority().toUpperCase()));
+            ticket.setOverdue(false);
+        }
+        if (request.type() != null) {
+            ticket.setType(TicketType.valueOf(request.type().toUpperCase()));
+        }
+        if (request.assigneeId() != null) {
+            User assignee = userRepository.findById(request.assigneeId())
+                    .orElseThrow(() -> NotFoundException.of("User", request.assigneeId()));
+            ticket.setAssignee(assignee);
+        }
+        if (request.dueDate() != null) {
+            ticket.setDueDate(request.dueDate());
+        }
+
+        return TicketMapper.toResponse(ticket);
+    }
+
     private void logAutoAssign(Long ticketId, Long assigneeId, List<Object[]> candidates) {
         List<Map<String, Object>> candidateCounts = candidates.stream()
                 .map(row -> Map.<String, Object>of(

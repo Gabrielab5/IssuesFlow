@@ -206,6 +206,43 @@ class TicketServiceTest {
         assertThat(counts.get(1).get("openTicketCount")).isEqualTo(3L);
     }
 
+    // ── update: isOverdue reset ───────────────────────────────────────────────
+
+    @Test
+    void update_priorityChange_clearsOverdueFlag() {
+        Ticket ticket = ticketWithOverdue(1L, TicketPriority.CRITICAL, true);
+        when(ticketRepository.findById(1L)).thenReturn(Optional.of(ticket));
+
+        UpdateTicketRequest request = new UpdateTicketRequest(null, null, null, "HIGH", null, null, null);
+        TicketResponse result = ticketService.update(1L, request);
+
+        assertThat(result.priority()).isEqualTo(TicketPriority.HIGH);
+        assertThat(result.overdue()).isFalse();
+    }
+
+    @Test
+    void update_noFieldsChanged_preservesExistingValues() {
+        Ticket ticket = ticketWithOverdue(2L, TicketPriority.MEDIUM, false);
+        when(ticketRepository.findById(2L)).thenReturn(Optional.of(ticket));
+
+        // All null fields → nothing changes
+        UpdateTicketRequest request = new UpdateTicketRequest(null, null, null, null, null, null, null);
+        TicketResponse result = ticketService.update(2L, request);
+
+        assertThat(result.priority()).isEqualTo(TicketPriority.MEDIUM);
+        assertThat(result.overdue()).isFalse();
+    }
+
+    @Test
+    void update_throwsNotFoundForUnknownTicket() {
+        when(ticketRepository.findById(999L)).thenReturn(Optional.empty());
+
+        UpdateTicketRequest request = new UpdateTicketRequest(null, null, "DONE", null, null, null, null);
+        assertThatThrownBy(() -> ticketService.update(999L, request))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("999");
+    }
+
     // ── error paths ───────────────────────────────────────────────────────────
 
     @Test
@@ -261,5 +298,18 @@ class TicketServiceTest {
         user.setUsername(username);
         user.setRole(UserRole.DEVELOPER);
         return user;
+    }
+
+    private Ticket ticketWithOverdue(Long id, TicketPriority priority, boolean overdue) {
+        Project p = project(1L);
+        Ticket t = new Ticket();
+        t.setId(id);
+        t.setTitle("Test");
+        t.setStatus(TicketStatus.IN_PROGRESS);
+        t.setPriority(priority);
+        t.setType(TicketType.BUG);
+        t.setProject(p);
+        t.setOverdue(overdue);
+        return t;
     }
 }
