@@ -89,8 +89,7 @@ class MentionServiceTest {
         User bob = user(2L, "bob");
         Comment comment = commentWithMentions(List.of(alice, bob));
         // new content only mentions alice; bob should be removed
-        when(userRepository.findByUsernameIgnoreCaseAndDeletedAtIsNull("alice"))
-                .thenReturn(Optional.of(alice));
+        // alice is already in the existing set — no lookup needed
 
         mentionService.syncMentions(comment, "Only @alice now");
 
@@ -120,7 +119,7 @@ class MentionServiceTest {
         Comment comment = commentWithMentions(List.of(alice));
 
         // alice is already in the collection; content still mentions her → no second entry
-        when(userRepository.findByUsernameIgnoreCaseAndDeletedAtIsNull(any())).thenReturn(Optional.empty());
+        // no stub needed — userRepository should never be called for already-existing mentions
 
         mentionService.syncMentions(comment, "Still talking to @alice");
 

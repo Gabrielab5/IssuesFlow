@@ -52,6 +52,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.UNPROCESSABLE_ENTITY, "Unprocessable Entity", ex.getMessage(), req);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ApiError> handleBadRequest(BadRequestException ex, HttpServletRequest req) {
+        return build(HttpStatus.BAD_REQUEST, "Bad Request", ex.getMessage(), req);
+    }
+
     @ExceptionHandler(UnsupportedMediaTypeException.class)
     public ResponseEntity<ApiError> handleUnsupportedMediaType(
             UnsupportedMediaTypeException ex, HttpServletRequest req) {
