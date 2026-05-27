@@ -4,9 +4,9 @@ import com.att.tdp.issueflow.comment.Comment;
 import com.att.tdp.issueflow.comment.CommentMention;
 import com.att.tdp.issueflow.common.PagedResponse;
 import com.att.tdp.issueflow.common.exception.NotFoundException;
-import com.att.tdp.issueflow.user.User;
 import com.att.tdp.issueflow.user.UserRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.lang.NonNull;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,7 +59,7 @@ public class MentionService {
     }
 
     @Transactional(readOnly = true)
-    public PagedResponse<MentionResponse> findByUser(Long userId, int page, int pageSize) {
+    public PagedResponse<MentionResponse> findByUser(@NonNull Long userId, int page, int pageSize) {
         if (!userRepository.existsById(userId)) {
             throw NotFoundException.of("User", userId);
         }

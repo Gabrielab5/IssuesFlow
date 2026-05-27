@@ -5,10 +5,12 @@ import com.att.tdp.issueflow.common.exception.NotFoundException;
 import com.att.tdp.issueflow.ticket.TicketRepository;
 import com.att.tdp.issueflow.user.User;
 import com.att.tdp.issueflow.user.UserRepository;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ProjectService {
@@ -35,22 +37,23 @@ public class ProjectService {
     }
 
     @Transactional(readOnly = true)
-    public ProjectResponse findById(Long projectId) {
+    public ProjectResponse findById(@NonNull Long projectId) {
         return ProjectMapper.toResponse(findProject(projectId));
     }
 
     @Transactional
     @Audited(action = "CREATE", entityType = "Project")
     public ProjectResponse create(CreateProjectRequest request) {
-        User owner = userRepository.findById(request.ownerId())
-                .orElseThrow(() -> NotFoundException.of("User", request.ownerId()));
-        Project project = ProjectMapper.toEntity(request, owner);
+        Long ownerId = Objects.requireNonNull(request.ownerId());
+        User owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> NotFoundException.of("User", ownerId));
+        Project project = Objects.requireNonNull(ProjectMapper.toEntity(request, owner));
         return ProjectMapper.toResponse(projectRepository.save(project));
     }
 
     @Transactional
     @Audited(action = "UPDATE", entityType = "Project")
-    public ProjectResponse update(Long projectId, UpdateProjectRequest request) {
+    public ProjectResponse update(@NonNull Long projectId, UpdateProjectRequest request) {
         Project project = findProject(projectId);
         ProjectMapper.updateEntity(project, request);
         return ProjectMapper.toResponse(project);
@@ -64,10 +67,10 @@ public class ProjectService {
      */
     @Transactional
     @Audited(action = "DELETE", entityType = "Project", idExpression = "#projectId")
-    public void delete(Long projectId) {
+    public void delete(@NonNull Long projectId) {
         Project project = findProject(projectId);
         ticketRepository.softDeleteAllByProjectId(projectId);
-        projectRepository.delete(project);
+        projectRepository.delete(Objects.requireNonNull(project));
     }
 
     @Transactional(readOnly = true)
@@ -79,7 +82,7 @@ public class ProjectService {
 
     @Transactional
     @Audited(action = "RESTORE", entityType = "Project")
-    public ProjectResponse restore(Long projectId) {
+    public ProjectResponse restore(@NonNull Long projectId) {
         projectRepository.findDeletedById(projectId)
                 .orElseThrow(() -> NotFoundException.of("Deleted project", projectId));
         projectRepository.restoreById(projectId);
@@ -90,7 +93,7 @@ public class ProjectService {
     }
 
     @Transactional(readOnly = true)
-    public List<WorkloadEntry> getWorkload(Long projectId) {
+    public List<WorkloadEntry> getWorkload(@NonNull Long projectId) {
         findProject(projectId);
         return ticketRepository.findWorkloadByProjectId(projectId).stream()
                 .map(row -> new WorkloadEntry(
@@ -101,7 +104,7 @@ public class ProjectService {
                 .toList();
     }
 
-    private Project findProject(Long projectId) {
+    private Project findProject(@NonNull Long projectId) {
         return projectRepository.findById(projectId)
                 .orElseThrow(() -> NotFoundException.of("Project", projectId));
     }

@@ -3,6 +3,7 @@ package com.att.tdp.issueflow.project;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,7 +38,7 @@ public class ProjectController {
     }
 
     @GetMapping("/{projectId}")
-    public ProjectResponse findById(@PathVariable Long projectId) {
+    public ProjectResponse findById(@PathVariable @NonNull Long projectId) {
         return projectService.findById(projectId);
     }
 
@@ -48,26 +49,26 @@ public class ProjectController {
 
     @PatchMapping("/{projectId}")
     public ProjectResponse update(
-            @PathVariable Long projectId,
+            @PathVariable @NonNull Long projectId,
             @Valid @RequestBody UpdateProjectRequest request
     ) {
         return projectService.update(projectId, request);
     }
 
     @DeleteMapping("/{projectId}")
-    public ResponseEntity<Void> delete(@PathVariable Long projectId) {
+    public ResponseEntity<Void> delete(@PathVariable @NonNull Long projectId) {
         projectService.delete(projectId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{projectId}/workload")
-    public List<WorkloadEntry> getWorkload(@PathVariable Long projectId) {
+    public List<WorkloadEntry> getWorkload(@PathVariable @NonNull Long projectId) {
         return projectService.getWorkload(projectId);
     }
 
     @PostMapping("/{projectId}/restore")
     @PreAuthorize("hasRole('ADMIN')")
-    public ProjectResponse restore(@PathVariable Long projectId) {
+    public ProjectResponse restore(@PathVariable @NonNull Long projectId) {
         return projectService.restore(projectId);
     }
 }

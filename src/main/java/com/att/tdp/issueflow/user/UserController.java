@@ -2,6 +2,7 @@ package com.att.tdp.issueflow.user;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +30,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public UserResponse findById(@PathVariable Long userId) {
+    public UserResponse findById(@PathVariable @NonNull Long userId) {
         return userService.findById(userId);
     }
 
@@ -42,7 +43,7 @@ public class UserController {
     @PostMapping("/update/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> update(
-            @PathVariable Long userId,
+            @PathVariable @NonNull Long userId,
             @Valid @RequestBody UpdateUserRequest request
     ) {
         userService.update(userId, request);
@@ -51,7 +52,7 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> delete(@PathVariable Long userId) {
+    public ResponseEntity<Void> delete(@PathVariable @NonNull Long userId) {
         userService.delete(userId);
         return ResponseEntity.ok().build();
     }

@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Attachment endpoints:
@@ -34,13 +36,13 @@ public class AttachmentController {
     }
 
     @GetMapping
-    public List<AttachmentResponse> list(@PathVariable Long ticketId) {
+    public List<AttachmentResponse> list(@PathVariable @NonNull Long ticketId) {
         return attachmentService.findByTicketId(ticketId);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AttachmentResponse> upload(
-            @PathVariable Long ticketId,
+            @PathVariable @NonNull Long ticketId,
             @RequestPart("file") MultipartFile file) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(attachmentService.upload(ticketId, file));
@@ -48,11 +50,11 @@ public class AttachmentController {
 
     @GetMapping("/{attachmentId}/download")
     public ResponseEntity<byte[]> download(
-            @PathVariable Long ticketId,
-            @PathVariable Long attachmentId) {
+            @PathVariable @NonNull Long ticketId,
+            @PathVariable @NonNull Long attachmentId) {
         DownloadResult result = attachmentService.download(ticketId, attachmentId);
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(result.contentType()))
+                .contentType(MediaType.parseMediaType(Objects.requireNonNull(result.contentType())))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         ContentDisposition.attachment()
                                 .filename(result.filename())
@@ -63,8 +65,8 @@ public class AttachmentController {
 
     @DeleteMapping("/{attachmentId}")
     public ResponseEntity<Void> delete(
-            @PathVariable Long ticketId,
-            @PathVariable Long attachmentId) {
+            @PathVariable @NonNull Long ticketId,
+            @PathVariable @NonNull Long attachmentId) {
         attachmentService.delete(ticketId, attachmentId);
         return ResponseEntity.noContent().build();
     }

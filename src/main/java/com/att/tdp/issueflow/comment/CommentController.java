@@ -3,6 +3,7 @@ package com.att.tdp.issueflow.comment;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,13 +27,13 @@ public class CommentController {
     }
 
     @GetMapping
-    public List<CommentResponse> findByTicketId(@PathVariable Long ticketId) {
+    public List<CommentResponse> findByTicketId(@PathVariable @NonNull Long ticketId) {
         return commentService.findByTicketId(ticketId);
     }
 
     @PostMapping
     public ResponseEntity<CommentResponse> create(
-            @PathVariable Long ticketId,
+            @PathVariable @NonNull Long ticketId,
             @Valid @RequestBody CreateCommentRequest request,
             Authentication authentication
     ) {
@@ -42,8 +43,8 @@ public class CommentController {
 
     @PatchMapping("/{commentId}")
     public CommentResponse update(
-            @PathVariable Long ticketId,
-            @PathVariable Long commentId,
+            @PathVariable @NonNull Long ticketId,
+            @PathVariable @NonNull Long commentId,
             @Valid @RequestBody UpdateCommentRequest request,
             Authentication authentication
     ) {
@@ -52,8 +53,8 @@ public class CommentController {
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> delete(
-            @PathVariable Long ticketId,
-            @PathVariable Long commentId,
+            @PathVariable @NonNull Long ticketId,
+            @PathVariable @NonNull Long commentId,
             Authentication authentication
     ) {
         commentService.delete(ticketId, commentId, authentication);

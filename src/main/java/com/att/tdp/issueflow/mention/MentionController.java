@@ -1,6 +1,8 @@
 package com.att.tdp.issueflow.mention;
 
 import com.att.tdp.issueflow.common.PagedResponse;
+
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +21,7 @@ public class MentionController {
 
     @GetMapping
     public PagedResponse<MentionResponse> findByUser(
-            @PathVariable Long userId,
+            @PathVariable @NonNull Long userId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int pageSize
     ) {

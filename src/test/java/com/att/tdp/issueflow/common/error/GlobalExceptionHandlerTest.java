@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.*;
@@ -28,20 +29,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Unit tests for GlobalExceptionHandler using standaloneSetup — no Spring context needed.
  */
+@SuppressWarnings("null")
 class GlobalExceptionHandlerTest {
 
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        ObjectMapper mapper = new ObjectMapper()
+        ObjectMapper mapper = Objects.requireNonNull(new ObjectMapper()
                 .registerModule(new JavaTimeModule())
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS));
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(new ExceptionThrowingController())
                 .setControllerAdvice(new GlobalExceptionHandler())
-                .setMessageConverters(new MappingJackson2HttpMessageConverter(mapper))
+                .setMessageConverters(new MappingJackson2HttpMessageConverter(Objects.requireNonNull(mapper)))
                 .build();
     }
 

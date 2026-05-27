@@ -14,7 +14,11 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.Objects;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
@@ -160,15 +164,17 @@ public class GlobalExceptionHandler {
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 
-    private ResponseEntity<ApiError> build(HttpStatus status, String error, String message,
+    private ResponseEntity<ApiError> build(@NonNull HttpStatus status, String error, String message,
                                            HttpServletRequest req) {
-        return ResponseEntity.status(status)
+        HttpStatusCode statusCode = Objects.requireNonNull((HttpStatusCode) status);
+        return ResponseEntity.status(statusCode)
                 .body(ApiError.of(status.value(), error, message, req.getRequestURI()));
     }
 
-    private ResponseEntity<ApiError> buildWithDetails(HttpStatus status, String error, String message,
+    private ResponseEntity<ApiError> buildWithDetails(@NonNull HttpStatus status, String error, String message,
                                                       HttpServletRequest req, List<String> details) {
-        return ResponseEntity.status(status)
+        HttpStatusCode statusCode = Objects.requireNonNull((HttpStatusCode) status);
+        return ResponseEntity.status(statusCode)
                 .body(ApiError.of(status.value(), error, message, req.getRequestURI(), details));
     }
 }

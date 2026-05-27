@@ -17,6 +17,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.csv.QuoteMode;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,7 +68,7 @@ public class TicketCsvService {
      * the streaming body, so 404 can be returned before any bytes are written.
      */
     @Transactional(readOnly = true)
-    public List<TicketResponse> getTicketsForExport(Long projectId) {
+    public List<TicketResponse> getTicketsForExport(@NonNull Long projectId) {
         if (!projectRepository.existsById(projectId)) {
             throw NotFoundException.of("Project", projectId);
         }

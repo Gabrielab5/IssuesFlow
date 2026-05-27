@@ -17,6 +17,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.lang.NonNull;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -105,7 +106,7 @@ public class AuditAspect {
         }
     }
 
-    private EvaluationContext buildContext(ProceedingJoinPoint pjp, Object result) {
+    private @NonNull EvaluationContext buildContext(ProceedingJoinPoint pjp, Object result) {
         StandardEvaluationContext ctx = new StandardEvaluationContext();
         MethodSignature sig = (MethodSignature) pjp.getSignature();
         String[] names = sig.getParameterNames();

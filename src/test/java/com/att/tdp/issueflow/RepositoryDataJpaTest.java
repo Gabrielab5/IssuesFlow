@@ -33,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@SuppressWarnings({"null", "resource"})
 class RepositoryDataJpaTest {
 
     @Container
@@ -123,7 +124,7 @@ class RepositoryDataJpaTest {
         entityManager.clear();
 
         assertThat(ticketRepository.countOpenByAssigneeAndProject(assignee.getId(), project.getId())).isEqualTo(2);
-        assertThat(ticketRepository.findByProjectIdAndStatusNot(project.getId(), TicketStatus.DONE))
+        assertThat(ticketRepository.findByProjectIdAndAssigneeIdAndStatusNot(project.getId(), assignee.getId(), TicketStatus.DONE))
                 .extracting(Ticket::getId)
                 .containsExactlyInAnyOrder(todo.getId(), inProgress.getId());
     }

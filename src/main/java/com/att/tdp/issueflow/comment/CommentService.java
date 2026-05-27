@@ -10,10 +10,12 @@ import com.att.tdp.issueflow.ticket.TicketRepository;
 import com.att.tdp.issueflow.user.User;
 import com.att.tdp.issueflow.user.UserRepository;
 import org.springframework.security.core.Authentication;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CommentService {
@@ -36,7 +38,7 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommentResponse> findByTicketId(Long ticketId) {
+    public List<CommentResponse> findByTicketId(@NonNull Long ticketId) {
         requireTicket(ticketId);
         return commentRepository.findByTicketIdOrderByCreatedAtAsc(ticketId).stream()
                 .map(CommentMapper::toResponse)
@@ -45,7 +47,7 @@ public class CommentService {
 
     @Transactional
     @Audited(action = "CREATE", entityType = "Comment")
-    public CommentResponse create(Long ticketId, CreateCommentRequest request, Authentication auth) {
+    public CommentResponse create(@NonNull Long ticketId, CreateCommentRequest request, Authentication auth) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> NotFoundException.of("Ticket", ticketId));
         User author = userRepository.findByUsernameAndDeletedAtIsNull(auth.getName())
@@ -64,7 +66,7 @@ public class CommentService {
     @Transactional
     @Audited(action = "UPDATE", entityType = "Comment")
     public CommentResponse update(
-            Long ticketId, Long commentId, UpdateCommentRequest request, Authentication auth
+            @NonNull Long ticketId, @NonNull Long commentId, UpdateCommentRequest request, Authentication auth
     ) {
         Comment comment = findComment(ticketId, commentId);
         assertCanModify(comment, auth);
@@ -77,21 +79,21 @@ public class CommentService {
 
     @Transactional
     @Audited(action = "DELETE", entityType = "Comment", idExpression = "#commentId")
-    public void delete(Long ticketId, Long commentId, Authentication auth) {
+    public void delete(@NonNull Long ticketId, @NonNull Long commentId, Authentication auth) {
         Comment comment = findComment(ticketId, commentId);
         assertCanModify(comment, auth);
-        commentRepository.delete(comment);
+        commentRepository.delete(Objects.requireNonNull(comment));
     }
 
     // ── private helpers ───────────────────────────────────────────────────────
 
-    private void requireTicket(Long ticketId) {
+    private void requireTicket(@NonNull Long ticketId) {
         if (!ticketRepository.existsById(ticketId)) {
             throw NotFoundException.of("Ticket", ticketId);
         }
     }
 
-    private Comment findComment(Long ticketId, Long commentId) {
+    private Comment findComment(@NonNull Long ticketId, @NonNull Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> NotFoundException.of("Comment", commentId));
         // Verify the comment belongs to the ticket in the URL (don't leak existence of other tickets)

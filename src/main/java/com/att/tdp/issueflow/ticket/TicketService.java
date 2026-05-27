@@ -9,11 +9,13 @@ import com.att.tdp.issueflow.project.Project;
 import com.att.tdp.issueflow.project.ProjectRepository;
 import com.att.tdp.issueflow.user.User;
 import com.att.tdp.issueflow.user.UserRepository;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class TicketService {
@@ -44,28 +46,33 @@ public class TicketService {
     @Transactional
     @Audited(action = "CREATE", entityType = "Ticket")
     public TicketResponse create(CreateTicketRequest request) {
-        Project project = projectRepository.findById(request.projectId())
-                .orElseThrow(() -> NotFoundException.of("Project", request.projectId()));
+        Long projectId = Objects.requireNonNull(request.projectId());
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> NotFoundException.of("Project", projectId));
 
         User assignee = null;
-        List<Object[]> candidates = null;
+        List<Object[]> autoAssignCandidates = null;
+        Long autoAssigneeId = null;
 
         if (request.assigneeId() != null) {
-            assignee = userRepository.findById(request.assigneeId())
-                    .orElseThrow(() -> NotFoundException.of("User", request.assigneeId()));
+            Long assigneeId = Objects.requireNonNull(request.assigneeId());
+            assignee = userRepository.findById(assigneeId)
+                    .orElseThrow(() -> NotFoundException.of("User", assigneeId));
         } else {
-            candidates = ticketRepository.findCandidatesSortedByWorkload(request.projectId());
-            if (!candidates.isEmpty()) {
-                Long bestId = ((Number) candidates.get(0)[0]).longValue();
+            autoAssignCandidates = ticketRepository.findCandidatesSortedByWorkload(projectId);
+            if (!autoAssignCandidates.isEmpty()) {
+                Long bestId = ((Number) autoAssignCandidates.get(0)[0]).longValue();
                 assignee = userRepository.findById(bestId)
                         .orElseThrow(() -> NotFoundException.of("User", bestId));
+                autoAssigneeId = assignee.getId();
             }
         }
 
-        Ticket saved = ticketRepository.save(TicketMapper.toEntity(request, project, assignee));
+        Ticket saved = ticketRepository.save(
+                Objects.requireNonNull(TicketMapper.toEntity(request, project, assignee)));
 
-        if (candidates != null && !candidates.isEmpty()) {
-            logAutoAssign(saved.getId(), assignee.getId(), candidates);
+        if (autoAssigneeId != null) {
+            logAutoAssign(Objects.requireNonNull(saved.getId()), autoAssigneeId, autoAssignCandidates);
         }
 
         return TicketMapper.toResponse(saved);
@@ -78,7 +85,7 @@ public class TicketService {
      */
     @Transactional
     @Audited(action = "UPDATE", entityType = "Ticket", idExpression = "#ticketId")
-    public TicketResponse update(Long ticketId, UpdateTicketRequest request) {
+    public TicketResponse update(@NonNull Long ticketId, UpdateTicketRequest request) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> NotFoundException.of("Ticket", ticketId));
 
@@ -99,8 +106,9 @@ public class TicketService {
             ticket.setType(TicketType.valueOf(request.type().toUpperCase()));
         }
         if (request.assigneeId() != null) {
-            User assignee = userRepository.findById(request.assigneeId())
-                    .orElseThrow(() -> NotFoundException.of("User", request.assigneeId()));
+            Long assigneeId = Objects.requireNonNull(request.assigneeId());
+            User assignee = userRepository.findById(assigneeId)
+                    .orElseThrow(() -> NotFoundException.of("User", assigneeId));
             ticket.setAssignee(assignee);
         }
         if (request.dueDate() != null) {

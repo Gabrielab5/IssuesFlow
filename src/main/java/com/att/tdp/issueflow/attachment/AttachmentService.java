@@ -6,6 +6,7 @@ import com.att.tdp.issueflow.common.exception.NotFoundException;
 import com.att.tdp.issueflow.ticket.Ticket;
 import com.att.tdp.issueflow.ticket.TicketRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,7 +37,7 @@ public class AttachmentService {
     }
 
     @Transactional(readOnly = true)
-    public List<AttachmentResponse> findByTicketId(Long ticketId) {
+    public List<AttachmentResponse> findByTicketId(@NonNull Long ticketId) {
         if (!ticketRepository.existsById(ticketId)) {
             throw NotFoundException.of("Ticket", ticketId);
         }
@@ -46,7 +47,7 @@ public class AttachmentService {
 
     @Audited(action = "CREATE", entityType = "Attachment")
     @Transactional
-    public AttachmentResponse upload(Long ticketId, MultipartFile file) {
+    public AttachmentResponse upload(@NonNull Long ticketId, MultipartFile file) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> NotFoundException.of("Ticket", ticketId));
 
@@ -89,7 +90,7 @@ public class AttachmentService {
     }
 
     @Transactional(readOnly = true)
-    public DownloadResult download(Long ticketId, Long attachmentId) {
+    public DownloadResult download(@NonNull Long ticketId, @NonNull Long attachmentId) {
         Attachment attachment = findAttachment(ticketId, attachmentId);
         try {
             byte[] bytes = Files.readAllBytes(Path.of(attachment.getStoragePath()));
@@ -101,7 +102,7 @@ public class AttachmentService {
 
     @Audited(action = "DELETE", entityType = "Attachment", idExpression = "#attachmentId")
     @Transactional
-    public void delete(Long ticketId, Long attachmentId) {
+    public void delete(@NonNull Long ticketId, @NonNull Long attachmentId) {
         Attachment attachment = findAttachment(ticketId, attachmentId);
         Path stored = Path.of(attachment.getStoragePath());
         attachmentRepository.delete(attachment);
@@ -112,7 +113,7 @@ public class AttachmentService {
         }
     }
 
-    private Attachment findAttachment(Long ticketId, Long attachmentId) {
+    private Attachment findAttachment(@NonNull Long ticketId, @NonNull Long attachmentId) {
         Attachment a = attachmentRepository.findById(attachmentId)
                 .orElseThrow(() -> NotFoundException.of("Attachment", attachmentId));
         if (!a.getTicket().getId().equals(ticketId)) {

@@ -4,6 +4,7 @@ import com.att.tdp.issueflow.ticket.TicketResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +43,7 @@ public class TicketCsvController {
      * so a 404 can still be returned if the project is not found.
      */
     @GetMapping("/export")
-    public ResponseEntity<StreamingResponseBody> export(@RequestParam Long projectId) {
+    public ResponseEntity<StreamingResponseBody> export(@RequestParam @NonNull Long projectId) {
         // Load and validate eagerly — throws NotFoundException before any bytes are written
         List<TicketResponse> tickets = ticketCsvService.getTicketsForExport(projectId);
 

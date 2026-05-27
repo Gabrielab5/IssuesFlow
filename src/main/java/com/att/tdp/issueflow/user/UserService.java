@@ -5,10 +5,12 @@ import com.att.tdp.issueflow.common.exception.ConflictException;
 import com.att.tdp.issueflow.common.exception.NotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserService {
@@ -29,7 +31,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserResponse findById(Long userId) {
+    public UserResponse findById(@NonNull Long userId) {
         return UserMapper.toResponse(findUser(userId));
     }
 
@@ -39,7 +41,7 @@ public class UserService {
         assertUsernameAvailable(request.username());
         assertEmailAvailable(request.email());
 
-        User user = UserMapper.toEntity(request, passwordEncoder.encode(request.password()));
+        User user = Objects.requireNonNull(UserMapper.toEntity(request, passwordEncoder.encode(request.password())));
         try {
             return UserMapper.toResponse(userRepository.save(user));
         } catch (DataIntegrityViolationException ex) {
@@ -49,19 +51,19 @@ public class UserService {
 
     @Transactional
     @Audited(action = "UPDATE", entityType = "User", idExpression = "#userId")
-    public void update(Long userId, UpdateUserRequest request) {
+    public void update(@NonNull Long userId, UpdateUserRequest request) {
         User user = findUser(userId);
         UserMapper.updateEntity(user, request);
     }
 
     @Transactional
     @Audited(action = "DELETE", entityType = "User", idExpression = "#userId")
-    public void delete(Long userId) {
+    public void delete(@NonNull Long userId) {
         User user = findUser(userId);
-        userRepository.delete(user);
+        userRepository.delete(Objects.requireNonNull(user));
     }
 
-    private User findUser(Long userId) {
+    private User findUser(@NonNull Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> NotFoundException.of("User", userId));
     }

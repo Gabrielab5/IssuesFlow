@@ -19,6 +19,8 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
     List<Ticket> findByProjectIdAndStatusNot(Long projectId, TicketStatus status);
 
+    List<Ticket> findByProjectIdAndAssigneeIdAndStatusNot(Long projectId, Long assigneeId, TicketStatus status);
+
     @Query("""
             SELECT COUNT(t)
             FROM Ticket t

@@ -3,6 +3,7 @@ package com.att.tdp.issueflow.ticket;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +27,7 @@ public class TicketController {
     }
 
     @PatchMapping("/{id}")
-    public TicketResponse update(@PathVariable Long id, @Valid @RequestBody UpdateTicketRequest request) {
+    public TicketResponse update(@PathVariable @NonNull Long id, @Valid @RequestBody UpdateTicketRequest request) {
         return ticketService.update(id, request);
     }
 }
