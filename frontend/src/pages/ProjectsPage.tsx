@@ -30,14 +30,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import {
-  Plus,
-  Edit,
-  Trash2,
-  ExternalLink,
-  RotateCcw,
-  BarChart3
-} from 'lucide-react';
+import { Plus, CreditCard as Edit, Trash2, ExternalLink, RotateCcw, ChartBar as BarChart3 } from 'lucide-react';
 
 const createProjectSchema = z.object({
   name: z.string().min(1, 'Project name is required').max(255, 'Name too long'),

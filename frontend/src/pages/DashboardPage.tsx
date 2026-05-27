@@ -4,13 +4,7 @@ import { projectsApi, ticketsApi, auditLogsApi } from '../api';
 import { useToast } from '../contexts/ToastContext';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import { LoadingSpinner } from '../components/ui/loading';
-import {
-  FolderKanban,
-  Ticket,
-  AlertCircle,
-  Clock,
-  Activity
-} from 'lucide-react';
+import { FolderKanban, Ticket, CircleAlert as AlertCircle, Clock, Activity } from 'lucide-react';
 import {
   PieChart,
   Pie,

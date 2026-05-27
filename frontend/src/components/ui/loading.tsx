@@ -1,4 +1,4 @@
-import { Loader2 } from 'lucide-react';
+import { Loader as Loader2 } from 'lucide-react';
 
 export function LoadingSpinner({ size = 'default' }: { size?: 'sm' | 'default' | 'lg' }) {
   const sizeClasses = {

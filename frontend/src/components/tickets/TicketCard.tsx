@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { TicketResponse, UserResponse, TicketPriority } from '../../types/api';
 import { Badge } from '../ui/badge';
 import { cn } from '../../lib/utils';
-import { AlertCircle, Clock, User } from 'lucide-react';
+import { CircleAlert as AlertCircle, Clock, User } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
 interface TicketCardProps {

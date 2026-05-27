@@ -23,17 +23,7 @@ import {
   Cell,
 } from 'recharts';
 import { format, parseISO } from 'date-fns';
-import {
-  ArrowLeft,
-  Edit,
-  Save,
-  X,
-  Download,
-  Upload,
-  BarChart3,
-  Ticket,
-  User,
-} from 'lucide-react';
+import { ArrowLeft, CreditCard as Edit, Save, X, Download, Upload, ChartBar as BarChart3, Ticket, User } from 'lucide-react';
 
 const STATUS_COLORS: Record<string, string> = {
   TODO: '#6b7280',

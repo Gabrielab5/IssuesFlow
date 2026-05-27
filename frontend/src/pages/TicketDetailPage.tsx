@@ -14,19 +14,7 @@ import { PageLoader } from '../components/ui/loading';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format, parseISO } from 'date-fns';
-import {
-  ArrowLeft,
-  Edit,
-  Save,
-  X,
-  User,
-  Calendar,
-  FileText,
-  Download,
-  Upload,
-  Trash2,
-  Send
-} from 'lucide-react';
+import { ArrowLeft, CreditCard as Edit, Save, X, User, Calendar, FileText, Download, Upload, Trash2, Send } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 export function TicketDetailPage() {

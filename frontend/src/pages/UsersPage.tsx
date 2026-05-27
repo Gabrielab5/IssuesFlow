@@ -20,7 +20,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '../components/ui/dialog';
-import { Plus, Edit, Trash2, Search } from 'lucide-react';
+import { Plus, CreditCard as Edit, Trash2, Search } from 'lucide-react';
 
 const createUserSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters'),
